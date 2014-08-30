@@ -1,0 +1,16 @@
+# built application files
+Diary/*.apk
+Diary/*.ap_
+
+# files for the dex VM
+Diary/*.dex
+
+# Java class files
+Diary/*.class
+
+# generated files
+Diary/bin/
+Diary/gen/
+
+# Local configuration file (sdk path, etc)
+Diary/local.properties
