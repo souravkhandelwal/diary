@@ -15,18 +15,20 @@
 
 package com.hackers.diary;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import com.hackers.diary.views.EventView;
 
 public class MainActivity extends Activity {
+
+    private static final int ADD_EVENT = 0;
+    private static final int EDIT_EVENT = 1;
+
     /**
      * Called when the activity is first created.
      */
@@ -39,22 +41,26 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         
     }
-    
+
     public void addEvent(View view) {
-    	Calendar c = Calendar.getInstance();
-    	SimpleDateFormat sdf = new SimpleDateFormat("dd:MMMM:yyyy HH:mm:ss a");
-    	String strDate = sdf.format(c.getTime());
-    	
-    	LinearLayout mainView = (LinearLayout) findViewById(R.id.MainScroll);
-    	mainView.addView(createNewTextView(strDate));
+        Intent i = new Intent(this, AddEvent.class);
+        startActivityForResult(i, ADD_EVENT);
     }
-    
-    private TextView createNewTextView(String text) {
-        final LayoutParams lparams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        final TextView textView = new TextView(this);
-        textView.setLayoutParams(lparams);
-        textView.setText("New text: " + text);
-        return textView;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        Bundle extras = intent.getExtras();
+        switch(requestCode) {
+            case ADD_EVENT:
+                String title = extras.getString(AddEvent.EVENT_TYPE);
+                LinearLayout mainView = (LinearLayout) findViewById(R.id.MainScroll);
+                EventView eventView = new EventView(this);
+                eventView.setEventData(title);
+                eventView.setEventType(title);
+                mainView.addView(eventView);
+                break;
+        }
     }
 }
 
