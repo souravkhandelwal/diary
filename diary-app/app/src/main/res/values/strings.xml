@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<!--
+ Copyright (C) 2012 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,8 +14,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <resources>
+
     <string name="app_name">Diary</string>
     <string name="add_button">Add Event</string>
 
@@ -26,4 +27,9 @@
     <string name="event_data">Event information</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
+
+    <string name="event_type">Event Type</string>
+    <string name="title_activity_add_event">AddEvent</string>
+    <string name="confirm">Add</string>
+
 </resources>

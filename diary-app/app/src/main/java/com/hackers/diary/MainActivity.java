@@ -19,19 +19,25 @@ import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hackers.diary.constants.EventEnum;
 import com.hackers.diary.database.DbManager;
+import com.hackers.diary.views.EventView;
 
 import java.util.Date;
 
 public class MainActivity extends Activity {
 
     private static final int CREATE_EVENT = 0;
+    private static final int ADD_EVENT = 0;
+    private static final int EDIT_EVENT = 1;
 
     private DbManager dbManager;
 
@@ -50,6 +56,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         addEvent = (Button) findViewById(R.id.addEvent);
+        showData();
     }
 
     public void addEvent(View view) {
@@ -57,12 +64,23 @@ public class MainActivity extends Activity {
         startActivityForResult(intent, CREATE_EVENT);
     }
 
-    private TextView createNewTextView(String text) {
-        final LayoutParams lparams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        final TextView textView = new TextView(this);
-        textView.setLayoutParams(lparams);
-        textView.setText("New text: " + text);
-        return textView;
+    public void showData() {
+        Cursor cursor = dbManager.fetchAllEvents();
+        while (cursor.moveToNext()) {
+            int event_index = cursor.getColumnIndex(DbManager.KEY_EVENT_TYPE);
+            int event_type = cursor.getInt(event_index);
+            int event_data_index = cursor.getColumnIndex(DbManager.KEY_EVENT_DATA);
+            String event_data = cursor.getString(event_data_index);
+            AddEvent(event_type, event_data);
+        }
+    }
+
+    private void AddEvent(int eventType, String eventData) {
+        LinearLayout mainView = (LinearLayout) findViewById(R.id.MainScroll);
+        EventView eventView = new EventView(this);
+        eventView.setEventData(eventData);
+        eventView.setEventType(EventEnum.values()[eventType].toString());
+        mainView.addView(eventView);
     }
 
     @Override
@@ -78,6 +96,7 @@ public class MainActivity extends Activity {
                             extras.getString(DbManager.KEY_EVENT_DATA));
                     Toast toast = Toast.makeText(this, "Created" + status, 10);
                     toast.show();
+                    showData();
                 } else {
                     Toast.makeText(this, "action cancelled", 10).show();
                 }
