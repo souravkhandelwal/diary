@@ -15,18 +15,28 @@
 
 package com.hackers.diary;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.hackers.diary.database.DbManager;
+
+import java.util.Date;
 
 public class MainActivity extends Activity {
+
+    private static final int CREATE_EVENT = 0;
+
+    private DbManager dbManager;
+
+    private Button addEvent;
+
     /**
      * Called when the activity is first created.
      */
@@ -35,26 +45,45 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         Resources res = getResources();
-
+        dbManager = new DbManager(this);
+        dbManager.open();
         setContentView(R.layout.main);
-        
+
+        addEvent = (Button) findViewById(R.id.addEvent);
     }
-    
+
     public void addEvent(View view) {
-    	Calendar c = Calendar.getInstance();
-    	SimpleDateFormat sdf = new SimpleDateFormat("dd:MMMM:yyyy HH:mm:ss a");
-    	String strDate = sdf.format(c.getTime());
-    	
-    	LinearLayout mainView = (LinearLayout) findViewById(R.id.MainScroll);
-    	mainView.addView(createNewTextView(strDate));
+        Intent intent = new Intent(this, EditEventActivity.class);
+        startActivityForResult(intent, CREATE_EVENT);
     }
-    
+
     private TextView createNewTextView(String text) {
         final LayoutParams lparams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         final TextView textView = new TextView(this);
         textView.setLayoutParams(lparams);
         textView.setText("New text: " + text);
         return textView;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        switch (requestCode) {
+            case CREATE_EVENT:
+                if (resultCode == RESULT_OK) {
+                    Bundle extras = intent.getExtras();
+                    long status = dbManager.createEvent(
+                            new Date(extras.getLong(DbManager.KEY_START_TIME)),
+                            extras.getInt(DbManager.KEY_EVENT_TYPE),
+                            extras.getString(DbManager.KEY_EVENT_DATA));
+                    Toast toast = Toast.makeText(this, "Created" + status, 10);
+                    toast.show();
+                } else {
+                    Toast.makeText(this, "action cancelled", 10).show();
+                }
+                break;
+
+        }
     }
 }
 

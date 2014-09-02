@@ -17,4 +17,13 @@
 <resources>
     <string name="app_name">Diary</string>
     <string name="add_button">Add Event</string>
+
+
+    <!-- Edit event dialog -->
+    <string name="select_date">Date</string>
+    <string name="select_time">Time</string>
+    <string name="set">Set</string>
+    <string name="event_data">Event information</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
 </resources>
